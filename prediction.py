@@ -4,6 +4,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.metrics import mean_squared_error
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import SelectKBest, f_regression
+from sklearn.ensemble import GradientBoostingRegressor
 
 def train_model(data):
     # Split the data into features and target variable
@@ -30,7 +36,6 @@ def train_model(data):
 
     return models
 
-import pandas as pd
 
 def predict_rank(models, input_data):
     results = {'Algorithm Used': [], 'Predicted Rank': [], 'Mean Squared Error': []}
@@ -44,8 +49,14 @@ def predict_rank(models, input_data):
         results['Mean Squared Error'].append(mse)
     result_df = pd.DataFrame(results)
     return result_df
-
-
+def load_dataset(file_path):
+    # Load dataset
+    data = pd.read_csv(file_path)
+    
+    # Drop nuisance columns
+    data = data.select_dtypes(include=np.number)
+    
+    return data
 def load_dataset(file_path):
     # Load dataset
     data = pd.read_csv(file_path)

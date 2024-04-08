@@ -1,11 +1,18 @@
 import streamlit as st
 import pandas as pd
 import os
+import plotly.express as px
+import matplotlib.pyplot as plt
+import altair as alt
+import numpy as np
+from chatbot import analyze_dataset,chatbot_response,questions
 #from motivation import display_motivation
 from category_metric import category_wise_ranking
 from correlation_metric import corr
 from prediction import load_dataset,train_model,predict_rank
 from top_performers import top_performers_in_each_metric
+from visualization_dashboard import visualization
+#from chatbot import process_query
 
 def load_datasets(year):
     file_path = f"D:/BTech/Major_Project_2024Jan/Data/{year}.csv"  # Adjust the path as per your file location
@@ -17,7 +24,7 @@ def main():
     st.title("Analysis Dashboard")
     
     st.sidebar.title("NIRF Navigator")
-    selected_section = st.sidebar.radio("Go to", ("Project Overview", "Benchmarking"))
+    selected_section = st.sidebar.radio("Go to", ("Project Overview", "Benchmarking","Visualization Dashboard","Admission AI Assistant"))
 
     if selected_section == "Project Overview":
         st.sidebar.header("**Project Overview**")
@@ -135,11 +142,38 @@ def main():
                 # Display predicted rank
                 st.write("Prediction Results:")
                 st.write(prediction_results)
-                # Implement logic for this option
+                
+    elif selected_section=="Visualization Dashboard":
+        visualization()
+    
+    elif selected_section=="Admission AI Assistant":
+        st.title('Dataset Analysis and Chatbot')
 
-            #st.write("Displaying dataset for the selected year:")
-            #st.write(dataset)
+        # Fixed dataset path
+        dataset_path = "D:/BTech/Major_Project_2024Jan/Data/2023.csv"
 
+        # Load dataset
+        df = pd.read_csv(dataset_path)
+
+        # Analyze dataset
+        dataset_summary = analyze_dataset(df)
+
+        # Display dataset summary
+        st.subheader("Dataset Summary")
+        st.write(dataset_summary)
+        questions()
+
+        # Chatbot
+        st.subheader("Chatbot")
+        user_question = st.text_input("Ask a question:")
+        if st.button("Ask"):
+            if user_question:
+                response = chatbot_response(user_question, dataset_summary)
+                st.write("Bot:", response)
+            else:
+                st.write("Bot:", "Please ask a question.")
+            
+        
 if __name__ == "__main__":
     main()
 
