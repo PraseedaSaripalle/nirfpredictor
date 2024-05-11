@@ -12,6 +12,8 @@ from correlation_metric import corr
 from prediction import load_dataset,train_model,predict_rank
 from top_performers import top_performers_in_each_metric
 from visualization_dashboard import visualization
+from nirf_navigator import project_showcase
+
 #from chatbot import process_query
 
 def load_datasets(year):
@@ -21,7 +23,9 @@ def load_datasets(year):
     return None
 
 def main():
-    st.title("Analysis Dashboard")
+    st.title("Gayatri Vidya Parishad College of Engineering for Women")
+    #st.subheader("Analysis Dashboard")
+
     
     st.sidebar.title("NIRF Navigator")
     selected_section = st.sidebar.radio("Go to", ("Project Overview", "Benchmarking","Visualization Dashboard","Admission AI Assistant"))
@@ -48,8 +52,9 @@ def main():
             st.write("**Project Architecture**")
             st.write("Welcome to Project Architecture section")
         else:
-            st.write("**NIRF Navigator**")
-            st.write("Welcome to NIRF Navigator section")
+            #st.write("**NIRF Navigator**")
+            #st.write("Welcome to NIRF Navigator section")
+            project_showcase()
 
     elif selected_section == "Benchmarking":
         st.sidebar.header("**Benchmarking**")
@@ -93,8 +98,18 @@ def main():
             elif selected_option == "Trend Analysis Over Time":
                 st.write("Displaying Trend Analysis Over Time")
                 st.header("Rank Prediction")
-                data=load_dataset("D:\BTech\Major_Project_2024Jan\Prediction\AllYearsData.csv")
-                model = train_model(data)
+                # Load dataset
+                data = pd.read_csv("D:\BTech\Major_Project_2024Jan\Prediction\AllYearsData.csv")
+                from sklearn.model_selection import train_test_split
+                # Split data into features (X) and target variable (y)
+                X = data.drop(columns=['Rank'])
+                y = data['Rank']
+
+                # Split data into train and test sets
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+                # Train model
+                models = train_model(data)
                 st.write("Enter values for prediction:")
                 # Input fields for SSValue, FSRValue, FQEValue, etc.
                 ss_value = st.number_input("Student Strength including Doctoral Students (SS Value)", value=20.0)
@@ -136,8 +151,8 @@ def main():
                     "PRValue": [pr_value]
                 })
 
-                 # Predict rank
-                prediction_results = predict_rank(model, user_input)
+                 # Call predict_rank function
+                prediction_results = predict_rank(models, user_input, X_test, y_test)
 
                 # Display predicted rank
                 st.write("Prediction Results:")
