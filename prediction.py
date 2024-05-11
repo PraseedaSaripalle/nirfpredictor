@@ -71,6 +71,16 @@ def predict_rank(models, input_data, X_test, y_test):
     result_df = pd.DataFrame(results)
     return result_df
 
+<<<<<<< HEAD
+=======
+def load_dataset(file_path):
+    # Load dataset
+    data = pd.read_csv(file_path)
+    return data
+
+    
+    return data
+>>>>>>> 154b269eea02b35fc2de0d28d52d7a8aa070940a
 def load_dataset(file_path):
     # Load dataset
     data = pd.read_csv(file_path)
